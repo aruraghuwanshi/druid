@@ -17,6 +17,7 @@
   ~ under the License.
   -->
 
+Test
 [![Coverage Status](https://img.shields.io/codecov/c/gh/apache/druid?logo=codecov)](https://codecov.io/gh/apache/druid)
 [![Docker](https://img.shields.io/badge/container-docker-blue.svg?logo=docker)](https://hub.docker.com/r/apache/druid)
 [![Helm](https://img.shields.io/badge/helm-druid-5F90AB?logo=helm)](https://github.com/asdf2014/druid-helm)
