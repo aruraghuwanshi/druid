@@ -29,6 +29,7 @@ import org.apache.druid.indexer.TaskStatus;
 import org.apache.druid.indexer.TaskStatusPlus;
 import org.apache.druid.indexing.common.TaskLock;
 import org.apache.druid.indexing.common.task.Task;
+import org.apache.druid.indexing.seekablestream.SeekableStreamIndexTask;
 import org.apache.druid.indexing.overlord.http.TaskStateLookup;
 import org.apache.druid.indexing.overlord.http.TotalWorkerCapacityResponse;
 import org.apache.druid.indexing.overlord.setup.WorkerBehaviorConfig;
@@ -164,6 +165,12 @@ public class TaskQueryTool
         final Task task = taskInfo.getTask();
         final TaskStatus status = taskInfo.getStatus();
         if (status.isRunnable()) {
+          Integer taskGroupId = null;
+          if (task instanceof SeekableStreamIndexTask) {
+            taskGroupId = ((SeekableStreamIndexTask<?, ?>) task)
+                .getIOConfig()
+                .getTaskGroupId();
+          }
           taskStatusPlusList.add(
               new TaskStatusPlus(
                   task.getId(),
@@ -172,11 +179,13 @@ public class TaskQueryTool
                   taskInfo.getCreatedTime(),
                   taskInfo.getCreatedTime(),
                   status.getStatusCode(),
+                  status.getStatusCode(),
                   null,
                   status.getDuration(),
                   status.getLocation(),
                   task.getDataSource(),
-                  status.getErrorMsg()
+                  status.getErrorMsg(),
+                  taskGroupId
               )
           );
         }
@@ -268,11 +277,13 @@ public class TaskQueryTool
                   statusPlus.getCreatedTime(),
                   runnerWorkItem.getQueueInsertionTime(),
                   statusPlus.getStatusCode(),
+                  statusPlus.getStatusCode(),
                   taskRunner.getRunnerTaskState(statusPlus.getId()), // this is racy for remoteTaskRunner
                   statusPlus.getDuration(),
                   runnerWorkItem.getLocation(), // location in taskInfo is only updated after the task is done.
                   statusPlus.getDataSource(),
-                  statusPlus.getErrorMsg()
+                  statusPlus.getErrorMsg(),
+                  statusPlus.getTaskGroupId()
               )
           );
         }

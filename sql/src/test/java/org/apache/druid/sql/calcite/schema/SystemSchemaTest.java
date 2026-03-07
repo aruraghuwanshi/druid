@@ -1345,6 +1345,7 @@ public class SystemSchemaTest extends CalciteTestBase
     Assert.assertEquals(1234L, row0[11]);
     Assert.assertEquals(-1L, row0[12]);
     Assert.assertEquals(null, row0[13]);
+    Assert.assertEquals(null, row0[14]); // task_group_id
 
     Object[] row1 = rows.get(1);
     Assert.assertEquals("index_wikipedia_2018-09-21T18:38:47.773Z", row1[0].toString());
@@ -1361,6 +1362,7 @@ public class SystemSchemaTest extends CalciteTestBase
     Assert.assertEquals(8100L, row1[11]);
     Assert.assertEquals(-1L, row1[12]);
     Assert.assertEquals(null, row1[13]);
+    Assert.assertEquals(null, row1[14]); // task_group_id
 
     // Verify value types.
     verifyTypes(rows, SystemSchema.TASKS_SIGNATURE);

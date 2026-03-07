@@ -219,6 +219,7 @@ public class SystemSchema extends AbstractSchema
       .add("plaintext_port", ColumnType.LONG)
       .add("tls_port", ColumnType.LONG)
       .add("error_msg", ColumnType.STRING)
+      .add("task_group_id", ColumnType.LONG)
       .build();
 
   static final RowSignature SUPERVISOR_SIGNATURE = RowSignature
@@ -929,7 +930,8 @@ public class SystemSchema extends AbstractSchema
                   task.getLocation().getHost(),
                   (long) task.getLocation().getPort(),
                   (long) task.getLocation().getTlsPort(),
-                  task.getErrorMsg()
+                  task.getErrorMsg(),
+                  task.getTaskGroupId() != null ? (long) task.getTaskGroupId() : null
               };
             }
 
