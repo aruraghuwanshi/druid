@@ -1316,6 +1316,23 @@ public class SystemSchemaTest extends CalciteTestBase
                   + "\t},\n"
                   + "\t\"dataSource\": \"wikipedia\",\n"
                   + "\t\"errorMsg\": null\n"
+                  + "}, {\n"
+                  + "\t\"id\": \"index_kafka_wikipedia_2018-09-22T10:00:00.000Z\",\n"
+                  + "\t\"groupId\": \"index_kafka_wikipedia\",\n"
+                  + "\t\"type\": \"index_kafka\",\n"
+                  + "\t\"createdTime\": \"2018-09-22T10:00:00.000Z\",\n"
+                  + "\t\"queueInsertionTime\": \"2018-09-22T10:00:00.100Z\",\n"
+                  + "\t\"statusCode\": \"RUNNING\",\n"
+                  + "\t\"runnerStatusCode\": \"RUNNING\",\n"
+                  + "\t\"duration\": null,\n"
+                  + "\t\"location\": {\n"
+                  + "\t\t\"host\": \"192.168.1.7\",\n"
+                  + "\t\t\"port\": 8101,\n"
+                  + "\t\t\"tlsPort\": -1\n"
+                  + "\t},\n"
+                  + "\t\"dataSource\": \"wikipedia\",\n"
+                  + "\t\"errorMsg\": null,\n"
+                  + "\t\"taskGroupId\": 5\n"
                   + "}]";
 
     EasyMock.expect(overlordClient.taskStatuses(null, null, null)).andReturn(
@@ -1363,6 +1380,23 @@ public class SystemSchemaTest extends CalciteTestBase
     Assert.assertEquals(-1L, row1[12]);
     Assert.assertEquals(null, row1[13]);
     Assert.assertEquals(null, row1[14]); // task_group_id
+
+    Object[] row2 = rows.get(2);
+    Assert.assertEquals("index_kafka_wikipedia_2018-09-22T10:00:00.000Z", row2[0].toString());
+    Assert.assertEquals("index_kafka_wikipedia", row2[1].toString());
+    Assert.assertEquals("index_kafka", row2[2].toString());
+    Assert.assertEquals("wikipedia", row2[3].toString());
+    Assert.assertEquals("2018-09-22T10:00:00.000Z", row2[4].toString());
+    Assert.assertEquals("2018-09-22T10:00:00.100Z", row2[5].toString());
+    Assert.assertEquals("RUNNING", row2[6].toString());
+    Assert.assertEquals("RUNNING", row2[7].toString());
+    Assert.assertEquals(0L, row2[8]);
+    Assert.assertEquals("192.168.1.7:8101", row2[9]);
+    Assert.assertEquals("192.168.1.7", row2[10]);
+    Assert.assertEquals(8101L, row2[11]);
+    Assert.assertEquals(-1L, row2[12]);
+    Assert.assertEquals(null, row2[13]);
+    Assert.assertEquals(5L, row2[14]); // task_group_id for streaming task
 
     // Verify value types.
     verifyTypes(rows, SystemSchema.TASKS_SIGNATURE);

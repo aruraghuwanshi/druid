@@ -63,6 +63,25 @@ public class TaskStatusPlus
       @Nullable String errorMsg
   )
   {
+    this(id, groupId, type, createdTime, queueInsertionTime, statusCode, runnerStatusCode,
+         duration, location, dataSource, errorMsg, null);
+  }
+
+  public TaskStatusPlus(
+      String id,
+      @Nullable String groupId,
+      @Nullable String type,
+      DateTime createdTime,
+      DateTime queueInsertionTime,
+      @Nullable TaskState statusCode,
+      @Nullable RunnerTaskState runnerStatusCode,
+      @Nullable Long duration,
+      TaskLocation location,
+      @Nullable String dataSource,
+      @Nullable String errorMsg,
+      @Nullable Integer taskGroupId
+  )
+  {
     this(
         id,
         groupId,
@@ -76,7 +95,7 @@ public class TaskStatusPlus
         location,
         dataSource,
         errorMsg,
-        null
+        taskGroupId
     );
   }
 

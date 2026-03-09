@@ -43,6 +43,7 @@ import org.apache.druid.indexer.TaskStatusPlus;
 import org.apache.druid.indexing.common.actions.TaskActionClient;
 import org.apache.druid.indexing.common.actions.TaskActionHolder;
 import org.apache.druid.indexing.common.task.Task;
+import org.apache.druid.indexing.seekablestream.SeekableStreamIndexTask;
 import org.apache.druid.indexing.overlord.DruidOverlord;
 import org.apache.druid.indexing.overlord.IndexerMetadataStorageAdapter;
 import org.apache.druid.indexing.overlord.TaskMaster;
@@ -303,12 +304,19 @@ public class OverlordResource
             .findAny()
             .orElse(null);
         if (workItem != null) {
+          final Task task = taskInfo.getTask();
+          Integer taskGroupId = null;
+          if (task instanceof SeekableStreamIndexTask) {
+            taskGroupId = ((SeekableStreamIndexTask<?, ?, ?>) task)
+                .getIOConfig()
+                .getTaskGroupId();
+          }
           response = new TaskStatusResponse(
               workItem.getTaskId(),
               new TaskStatusPlus(
                   taskInfo.getId(),
-                  taskInfo.getTask() == null ? null : taskInfo.getTask().getGroupId(),
-                  taskInfo.getTask() == null ? null : taskInfo.getTask().getType(),
+                  task == null ? null : task.getGroupId(),
+                  task == null ? null : task.getType(),
                   taskInfo.getCreatedTime(),
                   // Would be nice to include the real queue insertion time, but the
                   // TaskStorage API doesn't yet allow it.
@@ -318,19 +326,27 @@ public class OverlordResource
                   taskInfo.getStatus().getDuration(),
                   workItem.getLocation(),
                   taskInfo.getDataSource(),
-                  taskInfo.getStatus().getErrorMsg()
+                  taskInfo.getStatus().getErrorMsg(),
+                  taskGroupId
               )
           );
         }
       }
 
       if (response == null) {
+        final Task task = taskInfo.getTask();
+        Integer taskGroupId = null;
+        if (task instanceof SeekableStreamIndexTask) {
+          taskGroupId = ((SeekableStreamIndexTask<?, ?, ?>) task)
+              .getIOConfig()
+              .getTaskGroupId();
+        }
         response = new TaskStatusResponse(
             taskid,
             new TaskStatusPlus(
                 taskInfo.getId(),
-                taskInfo.getTask() == null ? null : taskInfo.getTask().getGroupId(),
-                taskInfo.getTask() == null ? null : taskInfo.getTask().getType(),
+                task == null ? null : task.getGroupId(),
+                task == null ? null : task.getType(),
                 taskInfo.getCreatedTime(),
                 // Would be nice to include the real queue insertion time, but the
                 // TaskStorage API doesn't yet allow it.
@@ -340,7 +356,8 @@ public class OverlordResource
                 taskInfo.getStatus().getDuration(),
                 Configs.valueOrDefault(taskInfo.getStatus().getLocation(), TaskLocation.unknown()),
                 taskInfo.getDataSource(),
-                taskInfo.getStatus().getErrorMsg()
+                taskInfo.getStatus().getErrorMsg(),
+                taskGroupId
             )
         );
       }

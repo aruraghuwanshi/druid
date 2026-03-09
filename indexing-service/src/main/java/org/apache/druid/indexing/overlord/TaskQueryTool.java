@@ -167,7 +167,7 @@ public class TaskQueryTool
         if (status.isRunnable()) {
           Integer taskGroupId = null;
           if (task instanceof SeekableStreamIndexTask) {
-            taskGroupId = ((SeekableStreamIndexTask<?, ?>) task)
+            taskGroupId = ((SeekableStreamIndexTask<?, ?, ?>) task)
                 .getIOConfig()
                 .getTaskGroupId();
           }
@@ -178,7 +178,6 @@ public class TaskQueryTool
                   task.getType(),
                   taskInfo.getCreatedTime(),
                   taskInfo.getCreatedTime(),
-                  status.getStatusCode(),
                   status.getStatusCode(),
                   null,
                   status.getDuration(),
@@ -276,7 +275,6 @@ public class TaskQueryTool
                   statusPlus.getType(),
                   statusPlus.getCreatedTime(),
                   runnerWorkItem.getQueueInsertionTime(),
-                  statusPlus.getStatusCode(),
                   statusPlus.getStatusCode(),
                   taskRunner.getRunnerTaskState(statusPlus.getId()), // this is racy for remoteTaskRunner
                   statusPlus.getDuration(),
