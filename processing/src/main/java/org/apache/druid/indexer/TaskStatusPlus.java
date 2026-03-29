@@ -46,6 +46,8 @@ public class TaskStatusPlus
   private final String errorMsg;
   @Nullable
   private final String groupId;
+  @Nullable
+  private final Integer taskGroupId;
 
   public TaskStatusPlus(
       String id,
@@ -61,6 +63,25 @@ public class TaskStatusPlus
       @Nullable String errorMsg
   )
   {
+    this(id, groupId, type, createdTime, queueInsertionTime, statusCode, runnerStatusCode,
+         duration, location, dataSource, errorMsg, null);
+  }
+
+  public TaskStatusPlus(
+      String id,
+      @Nullable String groupId,
+      @Nullable String type,
+      DateTime createdTime,
+      DateTime queueInsertionTime,
+      @Nullable TaskState statusCode,
+      @Nullable RunnerTaskState runnerStatusCode,
+      @Nullable Long duration,
+      TaskLocation location,
+      @Nullable String dataSource,
+      @Nullable String errorMsg,
+      @Nullable Integer taskGroupId
+  )
+  {
     this(
         id,
         groupId,
@@ -73,7 +94,8 @@ public class TaskStatusPlus
         duration,
         location,
         dataSource,
-        errorMsg
+        errorMsg,
+        taskGroupId
     );
   }
 
@@ -90,7 +112,8 @@ public class TaskStatusPlus
       @JsonProperty("duration") @Nullable Long duration,
       @JsonProperty("location") TaskLocation location,
       @JsonProperty("dataSource") @Nullable String dataSource, // nullable for backward compatibility
-      @JsonProperty("errorMsg") @Nullable String errorMsg
+      @JsonProperty("errorMsg") @Nullable String errorMsg,
+      @JsonProperty("taskGroupId") @Nullable Integer taskGroupId
   )
   {
     if (statusCode != null && statusCode.isComplete()) {
@@ -117,6 +140,7 @@ public class TaskStatusPlus
     this.location = Preconditions.checkNotNull(location, "location");
     this.dataSource = dataSource;
     this.errorMsg = errorMsg;
+    this.taskGroupId = taskGroupId;
   }
 
   @JsonProperty
@@ -199,6 +223,13 @@ public class TaskStatusPlus
     return errorMsg;
   }
 
+  @Nullable
+  @JsonProperty("taskGroupId")
+  public Integer getTaskGroupId()
+  {
+    return taskGroupId;
+  }
+
   @Override
   public boolean equals(Object o)
   {
@@ -218,7 +249,8 @@ public class TaskStatusPlus
            Objects.equals(getDuration(), that.getDuration()) &&
            Objects.equals(getLocation(), that.getLocation()) &&
            Objects.equals(getDataSource(), that.getDataSource()) &&
-           Objects.equals(getErrorMsg(), that.getErrorMsg());
+           Objects.equals(getErrorMsg(), that.getErrorMsg()) &&
+           Objects.equals(getTaskGroupId(), that.getTaskGroupId());
   }
 
   @Override
@@ -234,7 +266,8 @@ public class TaskStatusPlus
         getDuration(),
         getLocation(),
         getDataSource(),
-        getErrorMsg()
+        getErrorMsg(),
+        getTaskGroupId()
     );
   }
 
@@ -252,6 +285,7 @@ public class TaskStatusPlus
            ", location=" + location +
            ", dataSource='" + dataSource + '\'' +
            ", errorMsg='" + errorMsg + '\'' +
+           ", taskGroupId=" + taskGroupId +
            '}';
   }
 
@@ -276,7 +310,8 @@ public class TaskStatusPlus
         status.getDuration(),
         status.getLocation(),
         taskIdentifierInfo.getDataSource(),
-        status.getErrorMsg()
+        status.getErrorMsg(),
+        null
     );
   }
 }

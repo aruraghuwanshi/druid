@@ -290,6 +290,7 @@ check out the documentation for [ingestion tasks](../ingestion/tasks.md).
 |plaintext_port|BIGINT|Unsecured port of the server, or -1 if plaintext traffic is disabled|
 |tls_port|BIGINT|TLS port of the server, or -1 if TLS is disabled|
 |error_msg|VARCHAR|Detailed error message in case of FAILED tasks|
+|task_group_id|BIGINT|The partition group ID assigned by the streaming supervisor (Kafka/Kinesis). `NULL` for non-streaming tasks (compaction, index_parallel, etc.)|
 
 For example, to retrieve tasks information filtered by status, use the query
 

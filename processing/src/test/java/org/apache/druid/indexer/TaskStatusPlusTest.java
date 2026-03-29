@@ -52,6 +52,57 @@ public class TaskStatusPlusTest
   }
 
   @Test
+  public void testSerdeWithTaskGroupId() throws IOException
+  {
+    final TaskStatusPlus status = new TaskStatusPlus(
+        "testId",
+        "testGroupId",
+        "index_kafka",
+        DateTimes.nowUtc(),
+        DateTimes.nowUtc(),
+        TaskState.RUNNING,
+        TaskState.RUNNING,
+        RunnerTaskState.RUNNING,
+        1000L,
+        TaskLocation.create("testHost", 1010, -1),
+        "ds_test",
+        null,
+        3
+    );
+    final String json = jsonMapper.writeValueAsString(status);
+    Assert.assertTrue(json.contains("\"taskGroupId\":3"));
+    final TaskStatusPlus deserialized = jsonMapper.readValue(json, TaskStatusPlus.class);
+    Assert.assertEquals(status, deserialized);
+    Assert.assertEquals(Integer.valueOf(3), deserialized.getTaskGroupId());
+  }
+
+  @Test
+  public void testBackwardsCompatibilityDeserializeWithoutTaskGroupId() throws IOException
+  {
+    final String json = "{\n"
+                        + "\"id\": \"testId\",\n"
+                        + "\"groupId\": \"testGroupId\",\n"
+                        + "\"type\": \"index\",\n"
+                        + "\"createdTime\": \"2018-09-17T06:35:17.392Z\",\n"
+                        + "\"queueInsertionTime\": \"2018-09-17T06:35:17.392Z\",\n"
+                        + "\"statusCode\": \"RUNNING\",\n"
+                        + "\"status\": \"RUNNING\",\n"
+                        + "\"runnerStatusCode\": \"RUNNING\",\n"
+                        + "\"duration\": 1000,\n"
+                        + "\"location\": {\n"
+                        + "\"host\": \"testHost\",\n"
+                        + "\"port\": 1010,\n"
+                        + "\"tlsPort\": -1\n"
+                        + "},\n"
+                        + "\"dataSource\": \"ds_test\",\n"
+                        + "\"errorMsg\": null\n"
+                        + "}";
+    final TaskStatusPlus deserialized = jsonMapper.readValue(json, TaskStatusPlus.class);
+    Assert.assertNotNull(deserialized);
+    Assert.assertNull(deserialized.getTaskGroupId());
+  }
+
+  @Test
   public void testJsonAttributes() throws IOException
   {
     final String json = "{\n"
